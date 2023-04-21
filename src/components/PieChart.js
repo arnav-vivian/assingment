@@ -1,97 +1,115 @@
-import React, { useState, useEffect } from "react";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend, Title } from 'chart.js';
-import { Pie } from 'react-chartjs-2';
-ChartJS.register(ArcElement, Tooltip, Legend, Title);
+import React, { useEffect, useState } from "react";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { Pie } from "react-chartjs-2";
+import { json } from "react-router-dom";
+import { FaFileExcel } from "react-icons/fa";
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 function Piechart() {
-    const [country, setCountry] = useState([]);
-    const [population, setPopulation] = useState([]);
+    const [category, setCategory] = useState([]);
+    const [count, setCount] = useState([]);
     useEffect(() => {
-        const getcountry = [];
-        const getpopulation = [];
-        const getdata = async () => {
-            const reqData = await fetch("'https://fakestoreapi.com/products");
-            const resData = await reqData.json();
-            console.log(resData);
-            for (let i = 0; i < resData.length; i++) {
-                getcountry.push(resData[i].category);
-                getpopulation.push(resData[i].price);
+        const getcategory = [];
+        const getcount = [];
+        const fakestore = async () => {
+            const response = await fetch("https://fakestoreapi.com/products");
+            // console.log(response);
+            const jsonData = await response.json();
+            console.log(jsonData);
+            const map1 = new Map();
+
+            jsonData.map((value) => {
+                // map1.set(value.category,  0);
+
+                if (typeof map1.get(value.category) === "undefined") {
+                    map1.set(value.category, 1);
+                } else {
+                    map1.set(value.category, map1.get(value.category) + 1);
+                }
+            });
+
+            //console.log("done");
+
+            console.log(map1);
+
+            for (let [key, value] of map1.entries()) {
+                getcategory.push(key);
+
+
+                getcount.push(value);
+
+                console.log(getcount);
             }
-            setCountry(getcountry);
-            setPopulation(getpopulation);
-        }
-        getdata();
+            setCategory(getcategory);
+            setCount(getcount);
+        };
+        fakestore();
     }, []);
 
+
     return (
-        <React.Fragment>
-            <div className="container-fluid">
-                <h1 className="mt-3">Top 10 Countries with the highest population</h1>
-                <div className="row">
-                    <div className="col-md-5 mb-3 mt-3 ">
-                        <Pie
-                            width={300}
-                            height={200}
-                            data={{
-                                labels: country,
-                                datasets: [
-                                    {
-                                        label: '# of Votes',
-                                        data: population,
-                                        backgroundColor: [
-                                            'rgba(255, 99, 132, 0.2)',
-                                            'rgba(54, 162, 235, 0.2)',
-                                            'rgba(255, 206, 86, 0.2)',
-                                            'rgba(75, 192, 192, 0.2)',
-                                            'rgba(153, 102, 255, 0.2)',
-                                            'rgba(255, 159, 64, 0.2)',
-                                            'rgba(255, 109, 64, 0.6)',
-                                            'rgba(125, 169, 34, 0.8)',
-                                            'rgba(225, 99, 251, 0.3)',
-                                            'rgba(225, 99, 101, 0.4)',
+        <div className="">
+            <div className="flex">
+                <div className="col mb-3 mt-3 m-20 ">
 
-                                        ],
-                                        borderColor: [
-                                            'rgba(255, 99, 132, 1)',
-                                            'rgba(54, 162, 235, 1)',
-                                            'rgba(255, 206, 86, 1)',
-                                            'rgba(75, 192, 192, 1)',
-                                            'rgba(153, 102, 255, 1)',
-                                            'rgba(255, 159, 64, 1)',
-                                            'rgba(255, 109, 64, 0.6)',
-                                            'rgba(125, 169, 34, 0.8)',
-                                            'rgba(225, 99, 251, 0.3)',
-                                            'rgba(225, 99, 101, 0.4)',
-                                        ],
-                                        borderWidth: 1,
-                                        //hoverOffset:20
-                                        offset: [20, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-                                    },
-                                ],
-                            }}
+                    <Pie
 
-                            options={{
-                                responsive: true,
-                                plugins: {
-                                    title: {
-                                        fontSize: 30,
-                                        text: 'Chart js tutorial',
-                                        display: true,
-                                        font: { size: 20 }
-                                    },
-                                    legend: {
-                                        labels: {
-                                            font: { size: 15 }
-                                        }
-                                    }
+                        height={300}
+                        data={{
+                            labels: category,
+                            datasets: [
+                                {
+                                    label: "No of Products",
+                                    data: count,
+                                    backgroundColor: [
+                                        "rgba(38, 159, 159, 0.85)",
+                                        "rgba(54, 162, 235, 0.2)",
+                                        "rgba(221, 42, 255, 0.28)",
+                                        "rgba(0, 0, 150, 1)",
+                                        "rgba(153, 102, 255, 0.2)",
+                                        "rgba(2, 42, 255, 0.28)",
+                                    ],
+                                    borderColor: [
+                                        "rgba(38, 159, 159, 0.85)",
+                                        "rgba(54, 162, 235, 0.2)",
+                                        "rgba(221, 42, 255, 0.28)",
+                                        "rgba(0, 0, 150, 1)",
+                                        "rgba(153, 102, 255, 0.2)",
+                                        "rgba(2, 42, 255, 0.28)",
+                                    ],
+                                    borderWidth: 1,
+                                    offset: [0, 0, 0, 0],
                                 },
-                            }}
-                        />
-                    </div>
+                            ],
+                        }}
+                        // options={{
+
+                        // responsive: true,
+
+                        // }}
+                        options={{
+                            responsive: false,
+                            plugins: {
+                                title: {
+                                    fontSize: 15,
+                                    text: "Chart js tutorial",
+                                    display: true,
+                                    font: { size: 30 },
+                                },
+                                legend: {
+                                    labels: {
+                                        font: { size: 10 },
+
+
+                                    },
+                                },
+                            },
+                        }}
+                    />
                 </div>
             </div>
-        </React.Fragment>
+        </div>
     );
-
 }
+
 export default Piechart;
